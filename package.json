@@ -17,6 +17,41 @@
       {
         "command": "shell.helloWorld",
         "title": "Hello World"
+      },
+      {
+        "command": "shell.runCommand",
+        "title": "Run Command",
+        "category": "Shell"
+      },
+      {
+        "command": "shell.runCommandAtFileLocation",
+        "title": "Run Command at Active File Location",
+        "category": "Shell"
+      },
+      {
+        "command": "shell.showHistory",
+        "title": "Show Command History",
+        "category": "Shell"
+      },
+      {
+        "command": "shell.terminateCommand",
+        "title": "Terminate Running Command",
+        "category": "Shell"
+      },
+      {
+        "command": "shell.showCommandLog",
+        "title": "Show Command Log",
+        "category": "Shell"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "shell.runCommand",
+        "key": "Ctrl+R"
+      },
+      {
+        "command": "shell.runCommandAtFileLocation",
+        "key": "Ctrl+Shift+R"
       }
     ]
   },
@@ -32,17 +67,19 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.90.0",
     "@types/mocha": "^10.0.7",
     "@types/node": "20.x",
+    "@types/vscode": "^1.90.0",
     "@typescript-eslint/eslint-plugin": "^7.14.1",
     "@typescript-eslint/parser": "^7.11.0",
-    "eslint": "^8.57.0",
-    "typescript": "^5.4.5",
-    "ts-loader": "^9.5.1",
-    "webpack": "^5.92.1",
-    "webpack-cli": "^5.1.4",
     "@vscode/test-cli": "^0.0.9",
-    "@vscode/test-electron": "^2.4.0"
+    "@vscode/test-electron": "^2.4.0",
+    "eslint": "^8.57.0",
+    "spawn-command": "^0.0.2-1",
+    "tree-kill": "^1.2.2",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.4.5",
+    "webpack": "^5.92.1",
+    "webpack-cli": "^5.1.4"
   }
 }
