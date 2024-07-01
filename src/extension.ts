@@ -367,6 +367,15 @@ export class DocumentShellCommandTreeViewProvider implements vscode.TreeDataProv
 			}
 		}
 
+		if (currentCommands.length > 0) {
+			newCommands.push(<DocumentShellCommand>{
+				file: e.uri,
+				cmd: currentCommands,
+				name: currentLabel,
+				labelPosition,
+			});
+		}
+
 		this.commands = this.commands.filter(c => c.file.fsPath !== e.uri.fsPath).concat(newCommands);
 		if (deferRefresh === undefined || deferRefresh === false) {
 			this._onDidChangeTreeData.fire(undefined);
