@@ -13,12 +13,38 @@
   "activationEvents": [],
   "main": "./dist/extension.js",
   "contributes": {
+    "views": {
+      "explorer": [
+        {
+          "id": "shell.documentShellCommandView",
+          "name": "Commands"
+        }
+      ]
+    },
     "menus": {
+      "view/title": [
+        {
+          "command": "shell.documentShellCommandView.refresh",
+          "when": "view == shell.documentShellCommandView",
+          "group": "navigation"
+        }
+      ],
       "editor/context": [
         {
           "command": "shell.executeSelection",
           "when": "editorTextFocus",
           "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "shell.documentShellCommandView.run",
+          "when": "view == shell.documentShellCommandView && viewItem == shell.documentShellCommandTreeItem",
+          "group": "inline"
+        },
+        {
+          "command": "shell.documentShellCommandView.run",
+          "when": "view == shell.documentShellCommandView && viewItem == shell.documentShellCommandTreeItem"
         }
       ]
     },
@@ -62,6 +88,21 @@
       {
         "command": "shell.executeSelectionOutputReplace",
         "title": "Execute Selection output replace selection"
+      },
+      {
+        "command": "shell.documentShellCommandView.refresh",
+        "title": "Refresh",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "shell.documentShellCommandView.run",
+        "title": "Run",
+        "icon": "$(play)"
+      },
+      {
+        "command": "shell.documentShellCommandView.show",
+        "title": "Show",
+        "icon": "$(go-to-file)"
       }
     ],
     "keybindings": [
