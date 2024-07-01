@@ -13,6 +13,15 @@
   "activationEvents": [],
   "main": "./dist/extension.js",
   "contributes": {
+    "menus": {
+      "editor/context": [
+        {
+          "command": "shell.executeSelection",
+          "when": "editorTextFocus",
+          "group": "navigation"
+        }
+      ]
+    },
     "commands": [
       {
         "command": "shell.helloWorld",
@@ -21,11 +30,6 @@
       {
         "command": "shell.runCommand",
         "title": "Run Command",
-        "category": "Shell"
-      },
-      {
-        "command": "shell.runCommandAtFileLocation",
-        "title": "Run Command at Active File Location",
         "category": "Shell"
       },
       {
@@ -42,18 +46,94 @@
         "command": "shell.showCommandLog",
         "title": "Show Command Log",
         "category": "Shell"
+      },
+      {
+        "command": "shell.executeSelection",
+        "title": "Execute Selection"
+      },
+      {
+        "command": "shell.executeSelectionDelete",
+        "title": "Execute Selection and delete selection"
+      },
+      {
+        "command": "shell.executeSelectionOutputInPlace",
+        "title": "Execute Selection output in place"
+      },
+      {
+        "command": "shell.executeSelectionOutputReplace",
+        "title": "Execute Selection output replace selection"
       }
     ],
     "keybindings": [
       {
         "command": "shell.runCommand",
-        "key": "Ctrl+R"
+        "key": "Ctrl+; r"
       },
       {
-        "command": "shell.runCommandAtFileLocation",
-        "key": "Ctrl+Shift+R"
+        "command": "shell.executeSelection",
+        "key": "ctrl+; ctrl+enter",
+        "mac": "cmd+; ctrl+enter",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "shell.executeSelectionDelete",
+        "key": "ctrl+; ctrl+shift+enter",
+        "mac": "cmd+; ctrl+shift+enter",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "shell.executeSelectionOutputInPlace",
+        "key": "ctrl+; ctrl+alt+enter",
+        "mac": "cmd+; ctrl+alt+enter",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "shell.executeSelectionOutputReplace",
+        "key": "ctrl+; ctrl+shift+alt+enter",
+        "mac": "cmd+; ctrl+shift+alt+enter",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "shell.showHistory",
+        "key": "Ctrl+; h"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Shell",
+      "properties": {
+        "shell.shell": {
+          "type": "string",
+          "enum": ["cmd.exe", "powershell.exe"],
+          "default": "cmd.exe",
+          "description": "Configure shell"
+        },
+        "shell.outputTerminal": {
+          "type": "string",
+          "enum": ["Terminal", "Output Channel"],
+          "default": "Terminal",
+          "description": "Configure location of output",
+          "enumDescriptions": [
+            "Output to terminal (Ctrl+`)",
+            "Output to output channel (Ctrl+Shift+U, select Shell)"
+          ]
+        },
+        "shell.debug": {
+          "type": "boolean",
+          "default": false,
+          "description": "General debug preferences."
+        },
+        "shell.reuseTerminal": {
+          "type": "boolean",
+          "default": true,
+          "description": "Re-use previously created terminal rather creating new one."
+        },
+        "shell.stopPreviousProcess": {
+          "type": "boolean",
+          "default": true,
+          "description": "If re-using previous terminals, stop the previous execution upon new invocation."
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "yarn run package",
