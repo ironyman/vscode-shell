@@ -4,6 +4,8 @@
   "description": "",
   "publisher": "ironyman",
   "version": "0.0.1",
+  "license": "BSD-3-Clause",
+  "repository": "https://github.com/ironyman/vscode-shell",
   "engines": {
     "vscode": "^1.90.0"
   },
@@ -144,13 +146,19 @@
       "properties": {
         "shell.shell": {
           "type": "string",
-          "enum": ["cmd.exe", "powershell.exe"],
+          "enum": [
+            "cmd.exe",
+            "powershell.exe"
+          ],
           "default": "cmd.exe",
           "description": "Configure shell"
         },
         "shell.outputTerminal": {
           "type": "string",
-          "enum": ["Terminal", "Output Channel"],
+          "enum": [
+            "Terminal",
+            "Output Channel"
+          ],
           "default": "Terminal",
           "description": "Configure location of output",
           "enumDescriptions": [
@@ -185,7 +193,8 @@
     "watch-tests": "tsc -p . -w --outDir out",
     "pretest": "yarn run compile-tests && yarn run compile && yarn run lint",
     "lint": "eslint src --ext ts",
-    "test": "vscode-test"
+    "test": "vscode-test",
+    "build-vsix": "vsce package --yarn"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.7",
@@ -200,6 +209,7 @@
     "tree-kill": "^1.2.2",
     "ts-loader": "^9.5.1",
     "typescript": "^5.4.5",
+    "vsce": "^2.15.0",
     "webpack": "^5.92.1",
     "webpack-cli": "^5.1.4"
   }
