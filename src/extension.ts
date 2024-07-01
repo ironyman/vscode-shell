@@ -130,7 +130,7 @@ async function exec(cmd: string, cwd: string, output?: Output) {
 	} else if (output === Output.Terminal) {
 		const reuseTerminal = vscode.workspace.getConfiguration().get<boolean>('shell.reuseTerminal');
 		let term;
-		if (reuseTerminal && lastTerminal !== undefined) {
+		if (reuseTerminal && lastTerminal !== undefined && lastTerminal?.exitStatus === undefined) {
 			term = lastTerminal;
 			if (vscode.workspace.getConfiguration().get<boolean>('shell.stopPreviousProcess')) {
 				term.show(true);
