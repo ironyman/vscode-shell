@@ -81,15 +81,19 @@
       },
       {
         "command": "shell.executeSelectionDelete",
-        "title": "Execute Selection and delete selection"
+        "title": "Execute Selection And Delete Selection"
       },
       {
         "command": "shell.executeSelectionOutputInPlace",
-        "title": "Execute Selection output in place"
+        "title": "Execute Selection Output In-place"
       },
       {
         "command": "shell.executeSelectionOutputReplace",
-        "title": "Execute Selection output replace selection"
+        "title": "Execute Selection Output Replace Selection"
+      },
+      {
+        "command": "shell.executeLastCommand",
+        "title": "Execute Last Command"
       },
       {
         "command": "shell.documentShellCommandView.refresh",
@@ -135,6 +139,10 @@
         "key": "ctrl+; ctrl+shift+alt+enter",
         "mac": "cmd+; ctrl+shift+alt+enter",
         "when": "editorTextFocus"
+      },
+      {
+        "command": "shell.executeLastCommand",
+        "key": "Ctrl+shift+enter"
       },
       {
         "command": "shell.showHistory",
@@ -194,7 +202,8 @@
     "pretest": "yarn run compile-tests && yarn run compile && yarn run lint",
     "lint": "eslint src --ext ts",
     "test": "vscode-test",
-    "build-vsix": "vsce package --yarn"
+    "build-vsix": "vsce package --yarn",
+    "install": "powershell.exe -command \"code --install-extension (resolve-path .\\shell-*.vsix).path\""
   },
   "devDependencies": {
     "@types/mocha": "^10.0.7",

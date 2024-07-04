@@ -467,6 +467,20 @@ export function activate(context: vscode.ExtensionContext) {
 		)
 	);
 
+	context.subscriptions.push(
+		vscode.commands.registerCommand(
+			'shell.executeLastCommand',
+			async () => {
+				var lastCmd = commandHistory?.last();
+				if (lastCmd === undefined) {
+					return;
+				}
+				const output = vscode.workspace.getConfiguration().get('shell.outputTerminal') as Output;
+				exec(lastCmd.cmd, lastCmd.cwd, output);
+			}
+		)
+	);
+
 	const treeProvider = new DocumentShellCommandTreeViewProvider();
 	context.subscriptions.push(
 		vscode.workspace.onDidOpenTextDocument(treeProvider.onDidOpenTextDocument, treeProvider)
