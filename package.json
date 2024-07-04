@@ -20,6 +20,10 @@
         {
           "id": "shell.documentShellCommandView",
           "name": "Commands"
+        },
+        {
+          "id": "shell.clipboardHistoryView",
+          "name": "Clipboard"
         }
       ]
     },
@@ -109,6 +113,30 @@
         "command": "shell.documentShellCommandView.show",
         "title": "Show",
         "icon": "$(go-to-file)"
+      },
+      {
+        "command": "shell.clipboardHistoryView.show",
+        "title": "Show",
+        "icon": "$(go-to-file)"
+      },
+      {
+        "command": "shell.clipboardHistoryView.paste",
+        "title": "Paste",
+        "icon": "$(clippy)"
+      },
+      {
+        "command": "shell.clipboardHistoryView.remove",
+        "title": "Remove",
+        "icon": "$(search-remove)"
+      },
+      {
+        "command": "shell.clipboardHistoryView.edit",
+        "title": "Edit",
+        "icon": "$(settings-edit)"
+      },
+      {
+        "command": "shell.showClipboardHistory",
+        "title": "Show clipboard history"
       }
     ],
     "keybindings": [
@@ -147,6 +175,10 @@
       {
         "command": "shell.showHistory",
         "key": "Ctrl+; h"
+      },
+      {
+        "command": "shell.showClipboardHistory",
+        "key": "Ctrl+shift+v"
       }
     ],
     "configuration": {

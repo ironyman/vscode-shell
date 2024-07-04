@@ -5,7 +5,7 @@ var spawnCMD = require('spawn-command');
 var treeKill = require('tree-kill');
 
 var process: ReturnType<typeof spawnCMD> = null;
-var commandOutput: vscode.OutputChannel | null = null;
+export var commandOutput: vscode.OutputChannel | null = null;
 var commandHistory: CommandHistory | null = null;
 var lastTerminal: vscode.Terminal | undefined;
 
@@ -100,7 +100,8 @@ function showHistory() {
 	return new Promise((accept, reject) => {
 		let items: vscode.QuickPickItem[] = (commandHistory?.commands() || []).map((cmd) => {
 			return { label: cmd.cmd, detail: cmd.cwd, cmd: cmd, description: undefined };
-		});
+		}).reverse();
+
 		vscode.window.showQuickPick(items).then((value: any) => {
 			if (value) {
 				exec(value.cmd.cmd, value.cmd.cwd);
