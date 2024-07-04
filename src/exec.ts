@@ -228,7 +228,12 @@ async function executeSelection(context: vscode.ExtensionContext, opts?: { delet
 		selectedRange = new vscode.Range(activeEditor.document.positionAt(cursorOffset),
 			/* will replace later */activeEditor.document.positionAt(docText.length));
 		// Exclude the '\n' or '$' from command text
-		const startSelection = cursorOffset + 1;
+
+		let startSelection = cursorOffset;
+        if (docText[startSelection] === '$' || docText[startSelection] === '\n') {
+            startSelection++;
+        }
+
 		let endSelection = docText.indexOf('\n', startSelection);
 		endSelection = endSelection === -1 ? docText.length : endSelection;
 
