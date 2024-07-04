@@ -1,8 +1,14 @@
 # shell README
+# Build
+
+```
+$ # Build
+$ yarn build-vsix
+$ # Install
+$ yarn install
+```
 
 ## Features
-
-
 ## Requirements
 
 ## Extension Settings
