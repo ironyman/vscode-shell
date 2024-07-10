@@ -81,6 +81,14 @@ async function clipboardCopyHook(context: vscode.ExtensionContext) {
 }
 
 export function initializeClipboard(context: vscode.ExtensionContext) {
+	// Need to add this to package.json if you want to renable this.
+			// "contributes": {
+			// "views": {
+			// "explorer": [
+			// {
+			// 	"id": "shell.clipboardHistoryView",
+			// 	"name": "Clipboard"
+			// }
 	treeProvider = new ClipboardHistoryTreeViewProvider();
 	context.subscriptions.push(
 		vscode.window.createTreeView('shell.clipboardHistoryView', {

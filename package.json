@@ -20,10 +20,6 @@
         {
           "id": "shell.documentShellCommandView",
           "name": "Commands"
-        },
-        {
-          "id_disable": "shell.clipboardHistoryView",
-          "name": "Clipboard"
         }
       ]
     },
