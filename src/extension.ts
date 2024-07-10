@@ -26,11 +26,11 @@ export function activate(context: vscode.ExtensionContext) {
 
 	initializeExec(context);
 	initializeDocumentShellCommandsTreeView(context);
-	initializeClipboard(context);
+	// initializeClipboard(context);
 }
 
 // This method is called when your extension is deactivated
 export function deactivate() {
-	deactivateClipboard();
+	// deactivateClipboard();
 	deactivateExec();
 }

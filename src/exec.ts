@@ -110,12 +110,12 @@ function showHistory() {
 	});
 }
 
-export async function exec(cmd: string, cwd: string, output?: Output) {
+export async function exec(cmd: string, cwd: string, opts?: { output?: Output, stopPrevious?: boolean } ) {
 	if (!cmd) { return; }
 
 	commandHistory?.enqueue(cmd, cwd);
 
-	if (!output || output === Output.OutputChannel) {
+	if (!opts?.output || opts?.output === Output.OutputChannel) {
 		commandOutput?.clear();
 		commandOutput?.show(true);
 		commandOutput?.appendLine(`> Running command \`${cmd}\`...`);
@@ -127,13 +127,19 @@ export async function exec(cmd: string, cwd: string, output?: Output) {
 			vscode.window.showErrorMessage(reason, 'Show Output')
 				.then((action) => { commandOutput?.show(); });
 		});
-	} else if (output === Output.Terminal) {
+	} else if (opts?.output === Output.Terminal) {
 		const reuseTerminal = vscode.workspace.getConfiguration().get<boolean>('shell.reuseTerminal');
 		let term;
 		if (reuseTerminal && lastTerminal !== undefined && lastTerminal?.exitStatus === undefined) {
 			term = lastTerminal;
-			if (vscode.workspace.getConfiguration().get<boolean>('shell.stopPreviousProcess')) {
-				term.show(true);
+			term.show(true);
+			let stopPrevious = opts?.stopPrevious;
+
+			if (stopPrevious === undefined) {
+				stopPrevious = vscode.workspace.getConfiguration().get<boolean>('shell.stopPreviousProcess');
+			}
+
+			if (stopPrevious) {
 				vscode.commands.executeCommand('workbench.action.terminal.sendSequence', {
 					text: '\u0003'
 				});
@@ -150,7 +156,7 @@ export async function exec(cmd: string, cwd: string, output?: Output) {
 		term.show(true);
 		term.sendText(`${cmd}\n`);
 		lastTerminal = term;
-	} else if (output === Output.Editor && vscode.window.activeTextEditor) {
+	} else if (opts?.output === Output.Editor && vscode.window.activeTextEditor) {
 		let insertOffset = vscode.window.activeTextEditor.document.offsetAt(
 			new vscode.Position(vscode.window.activeTextEditor!.selection.active.line + 1, 0));
 		// let previousEdit: Thenable<boolean> = Promise.resolve(true);
@@ -254,10 +260,10 @@ async function executeSelection(context: vscode.ExtensionContext, opts?: { delet
 	}
 
 	if (opts?.outputInPlace) {
-		exec(commandText, path.dirname(activeEditor.document.uri.fsPath), Output.Editor);
+		exec(commandText, path.dirname(activeEditor.document.uri.fsPath), { output: Output.Editor });
 	} else {
 		const output = vscode.workspace.getConfiguration().get('shell.outputTerminal') as Output;
-		exec(commandText, path.dirname(activeEditor.document.uri.fsPath), output);
+		exec(commandText, path.dirname(activeEditor.document.uri.fsPath), { output });
 	}
 }
 
@@ -337,7 +343,7 @@ export function initializeExec(context: vscode.ExtensionContext) {
 					return;
 				}
 				const output = vscode.workspace.getConfiguration().get('shell.outputTerminal') as Output;
-				exec(lastCmd.cmd, lastCmd.cwd, output);
+				exec(lastCmd.cmd, lastCmd.cwd, { output });
 			}
 		)
 	);

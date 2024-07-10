@@ -68,6 +68,11 @@ export class DocumentShellCommandTreeViewProvider implements vscode.TreeDataProv
 		});
 	}
 
+	public clear() {
+		this.commands = [];
+		this._onDidChangeTreeData.fire(undefined);
+	}
+
 	// Parse things like
 	// $ # List files
 	// $ dir `
@@ -142,15 +147,23 @@ export function initializeDocumentShellCommandsTreeView(context: vscode.Extensio
 	vscode.commands.registerCommand('shell.documentShellCommandView.refresh', () =>
 		treeProvider.refresh()
 	);
+	vscode.commands.registerCommand('shell.documentShellCommandView.clear', () =>
+		treeProvider.clear()
+	);
 	vscode.commands.registerCommand('shell.documentShellCommandView.run', (item: DocumentShellCommandTreeItem) => {
 		const output = vscode.workspace.getConfiguration().get('shell.outputTerminal') as Output;
-		exec(item.cmd.join("\n"), path.dirname(item.file.fsPath), output);
+		exec(item.cmd.join("\n"), path.dirname(item.file.fsPath), { output });
+	});
+	vscode.commands.registerCommand('shell.documentShellCommandView.runQueue', (item: DocumentShellCommandTreeItem) => {
+		const output = vscode.workspace.getConfiguration().get('shell.outputTerminal') as Output;
+		exec(item.cmd.join("\n"), path.dirname(item.file.fsPath), { output, stopPrevious: false });
 	});
 	vscode.commands.registerCommand('shell.documentShellCommandView.show', (file: vscode.Uri, position: vscode.Position) => {
 		vscode.workspace.openTextDocument(file).then(editor => {
 			return vscode.window.showTextDocument(editor);
 		}).then(editor => {
 			editor.revealRange(new vscode.Range(position, position));
+
 			editor.selection = new vscode.Selection(position, position);
 		});
 	});

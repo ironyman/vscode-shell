@@ -22,7 +22,7 @@
           "name": "Commands"
         },
         {
-          "id": "shell.clipboardHistoryView",
+          "id_disable": "shell.clipboardHistoryView",
           "name": "Clipboard"
         }
       ]
@@ -32,6 +32,16 @@
         {
           "command": "shell.documentShellCommandView.refresh",
           "when": "view == shell.documentShellCommandView",
+          "group": "navigation"
+        },
+        {
+          "command": "shell.documentShellCommandView.clear",
+          "when": "view == shell.documentShellCommandView",
+          "group": "navigation"
+        },
+        {
+          "command": "shell.clipboardHistoryView.clear",
+          "when": "view == shell.clipboardHistoryView",
           "group": "navigation"
         }
       ],
@@ -51,6 +61,32 @@
         {
           "command": "shell.documentShellCommandView.run",
           "when": "view == shell.documentShellCommandView && viewItem == shell.documentShellCommandTreeItem"
+        },
+        {
+          "command": "shell.documentShellCommandView.runQueue",
+          "when": "view == shell.documentShellCommandView && viewItem == shell.documentShellCommandTreeItem",
+          "group": "inline"
+        },
+        {
+          "command": "shell.documentShellCommandView.runQueue",
+          "when": "view == shell.documentShellCommandView && viewItem == shell.documentShellCommandTreeItem"
+        },
+        {
+          "command": "shell.clipboardHistoryView.paste",
+          "when": "view == shell.clipboardHistoryView && viewItem == shell.clipboardHistoryTreeItem",
+          "group": "inline"
+        },
+        {
+          "command": "shell.clipboardHistoryView.paste",
+          "when": "view == shell.clipboardHistoryView && viewItem == shell.clipboardHistoryTreeItem"
+        },
+        {
+          "command": "shell.clipboardHistoryView.delete",
+          "when": "view == shell.clipboardHistoryView && viewItem == shell.clipboardHistoryTreeItem"
+        },
+        {
+          "command": "shell.clipboardHistoryView.edit",
+          "when": "view == shell.clipboardHistoryView && viewItem == shell.clipboardHistoryTreeItem"
         }
       ]
     },
@@ -105,17 +141,22 @@
         "icon": "$(refresh)"
       },
       {
+        "command": "shell.documentShellCommandView.clear",
+        "title": "Clear",
+        "icon": "$(trash)"
+      },
+      {
         "command": "shell.documentShellCommandView.run",
         "title": "Run",
         "icon": "$(play)"
       },
       {
-        "command": "shell.documentShellCommandView.show",
-        "title": "Show",
-        "icon": "$(go-to-file)"
+        "command": "shell.documentShellCommandView.runQueue",
+        "title": "Queue",
+        "icon": "$(watch)"
       },
       {
-        "command": "shell.clipboardHistoryView.show",
+        "command": "shell.documentShellCommandView.show",
         "title": "Show",
         "icon": "$(go-to-file)"
       },
@@ -125,14 +166,19 @@
         "icon": "$(clippy)"
       },
       {
-        "command": "shell.clipboardHistoryView.remove",
-        "title": "Remove",
+        "command": "shell.clipboardHistoryView.delete",
+        "title": "Delete",
         "icon": "$(search-remove)"
       },
       {
         "command": "shell.clipboardHistoryView.edit",
         "title": "Edit",
         "icon": "$(settings-edit)"
+      },
+      {
+        "command": "shell.clipboardHistoryView.clear",
+        "title": "Clear",
+        "icon": "$(trash)"
       },
       {
         "command": "shell.showClipboardHistory",
@@ -240,12 +286,14 @@
   "devDependencies": {
     "@types/mocha": "^10.0.7",
     "@types/node": "20.x",
+    "@types/ringbufferjs": "^1.1.2",
     "@types/vscode": "^1.90.0",
     "@typescript-eslint/eslint-plugin": "^7.14.1",
     "@typescript-eslint/parser": "^7.11.0",
     "@vscode/test-cli": "^0.0.9",
     "@vscode/test-electron": "^2.4.0",
     "eslint": "^8.57.0",
+    "ringbufferjs": "^2.0.0",
     "spawn-command": "^0.0.2-1",
     "tree-kill": "^1.2.2",
     "ts-loader": "^9.5.1",

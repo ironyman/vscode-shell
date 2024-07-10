@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { commandOutput } from './exec';
+import RingBuffer from 'ringbufferjs';
 
 let clipboardHookDisposable: vscode.Disposable;
 
@@ -8,12 +9,13 @@ interface ClipboardItem {
 	source: string;
 }
 
-let clipboardHistory: ClipboardItem[] = [];
+const CLIPBOARD_HISTORY_ITEMS_NR = 99
+let clipboardHistory = new RingBuffer(CLIPBOARD_HISTORY_ITEMS_NR);
 let treeProvider: ClipboardHistoryTreeViewProvider | undefined;
 
 export class ClipboardHistoryTreeItem extends vscode.TreeItem {
 	public override collapsibleState = vscode.TreeItemCollapsibleState.None;
-	public override contextValue = 'shell.ClipboardHistoryTreeItem';
+	public override contextValue = 'shell.clipboardHistoryTreeItem';
 	public override description = 'Command';
 	public override iconPath = new vscode.ThemeIcon("terminal");
 
@@ -54,7 +56,8 @@ export class ClipboardHistoryTreeViewProvider implements vscode.TreeDataProvider
 		if (element) {
 			return [];
 		}
-		let copy = Array.from(clipboardHistory).reverse();
+
+		let copy = Array.from(clipboardHistory.peekN(clipboardHistory.size())).reverse() as ClipboardItem[];
 		return copy.map(item => {
 			return new ClipboardHistoryTreeItem(item);
 		});
@@ -73,7 +76,7 @@ async function clipboardCopyHook(context: vscode.ExtensionContext) {
 	context.subscriptions.push(clipboardHookDisposable);
 
 	const filename = vscode.window.activeTextEditor?.document.fileName;
-	clipboardHistory.push({ content: clipboardText, source: filename || ''  });
+	clipboardHistory.enq({ content: clipboardText, source: filename || ''  });
 	treeProvider?.refresh();
 }
 
@@ -88,6 +91,42 @@ export function initializeClipboard(context: vscode.ExtensionContext) {
 
 	clipboardHookDisposable = vscode.commands.registerCommand('editor.action.clipboardCopyAction', async (_arg: any) => clipboardCopyHook(context));
 	context.subscriptions.push(clipboardHookDisposable);
+
+	vscode.commands.registerCommand('shell.clipboardHistoryView.refresh', () =>
+		treeProvider?.refresh()
+	);
+	vscode.commands.registerCommand('shell.clipboardHistoryView.clear', () => {
+		clipboardHistory.deqN(clipboardHistory.size());
+		treeProvider?.refresh();
+	});
+
+	vscode.commands.registerTextEditorCommand('shell.clipboardHistoryView.paste',
+		(textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit, item: ClipboardHistoryTreeItem, ...args: any[]) => {
+			const pasteStart = textEditor.selection.start;
+
+			textEditor.edit((editor) => {
+				editor.delete(textEditor.selection);    // Delete anything currently selected
+				editor.insert(textEditor.selection.start, item.item.content);
+			}).then(() => {
+				// This would work if you used editor.action.clipboardPasteAction
+				// const pasteEnd = textEditor.selection.end;
+				const pasteEnd = textEditor.document.positionAt(textEditor.document.offsetAt(pasteStart) + item.item.content.length);
+				textEditor.selection = new vscode.Selection(pasteStart.line, pasteStart.character, pasteEnd.line, pasteEnd.character);
+				vscode.commands.executeCommand('editor.action.formatSelection').then(() => {
+					textEditor.selection = new vscode.Selection(pasteEnd.line, pasteEnd.character, pasteEnd.line, pasteEnd.character);
+				});
+			});
+		}
+	);
+
+	vscode.commands.registerCommand('shell.clipboardHistoryView.delete', () => {
+		clipboardHistory.deqN(clipboardHistory.size());
+		treeProvider?.refresh();
+	});
+	vscode.commands.registerCommand('shell.clipboardHistoryView.edit', () => {
+		clipboardHistory.deqN(clipboardHistory.size());
+		treeProvider?.refresh();
+	});
 }
 
 export function deactivateClipboard() {
