@@ -157,6 +157,7 @@ export function initializeDocumentShellCommandsTreeView(context: vscode.Extensio
 	vscode.commands.registerCommand('shell.documentShellCommandView.runQueue', (item: DocumentShellCommandTreeItem) => {
 		const output = vscode.workspace.getConfiguration().get('shell.outputTerminal') as Output;
 		exec(item.cmd.join("\n"), path.dirname(item.file.fsPath), { output, stopPrevious: false });
+		vscode.window.showInformationMessage(`Command ${item.label} queued`);
 	});
 	vscode.commands.registerCommand('shell.documentShellCommandView.show', (file: vscode.Uri, position: vscode.Position) => {
 		vscode.workspace.openTextDocument(file).then(editor => {

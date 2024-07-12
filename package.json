@@ -217,10 +217,6 @@
       {
         "command": "shell.showHistory",
         "key": "Ctrl+; h"
-      },
-      {
-        "command": "shell.showClipboardHistory",
-        "key": "Ctrl+shift+v"
       }
     ],
     "configuration": {
