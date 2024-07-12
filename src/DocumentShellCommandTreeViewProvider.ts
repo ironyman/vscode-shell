@@ -38,12 +38,18 @@ export class DocumentShellCommandTreeItem extends vscode.TreeItem implements Doc
 	}
 }
 
-export class DocumentShellCommandTreeViewProvider implements vscode.TreeDataProvider<DocumentShellCommandTreeItem> {
+export class DocumentShellCommandTreeViewProvider implements vscode.TreeDataProvider<DocumentShellCommandTreeItem>,
+	vscode.CodeLensProvider {
 	private readonly _onDidChangeTreeData: vscode.EventEmitter<DocumentShellCommandTreeItem | undefined> = new vscode.EventEmitter<DocumentShellCommandTreeItem | undefined>();
 	// eslint-disable-next-line @typescript-eslint/member-ordering
 	public readonly onDidChangeTreeData: vscode.Event<DocumentShellCommandTreeItem | undefined> = this._onDidChangeTreeData.event;
+	// onDidChangeCodeLenses?: vscode.Event<void> | undefined;
+
+	private readonly _onDidChangeCodeLenses: vscode.EventEmitter<void> = new vscode.EventEmitter<void>();
+	onDidChangeCodeLenses?: vscode.Event<void> | undefined = this._onDidChangeCodeLenses.event;
 
 	private commands: DocumentShellCommand[] = [];
+	private commandTreeItems: DocumentShellCommandTreeItem[] = [];
 
 	constructor() {
 		this.refresh();
@@ -63,9 +69,10 @@ export class DocumentShellCommandTreeViewProvider implements vscode.TreeDataProv
 		if (element) {
 			return [];
 		}
-		return this.commands.map(c => {
+		this.commandTreeItems = this.commands.map(c => {
 			return new DocumentShellCommandTreeItem(c.file, c.cmd, c.name, c.labelPosition);
 		});
+		return this.commandTreeItems;
 	}
 
 	public clear() {
@@ -133,10 +140,40 @@ export class DocumentShellCommandTreeViewProvider implements vscode.TreeDataProv
 			this._onDidChangeTreeData.fire(undefined);
 		}
 	}
+
+	provideCodeLenses(document: vscode.TextDocument, token: vscode.CancellationToken): vscode.ProviderResult<vscode.CodeLens[]> {
+		return this.commandTreeItems.filter(c => c.file.path === document.uri.path).map(c => {
+			const runCommand: vscode.Command = {
+				command: 'shell.documentShellCommandView.run',
+				title: 'Run',
+				arguments: [
+					c
+				]
+			};
+
+			const copyCommand: vscode.Command = {
+				command: 'shell.documentShellCommandView.copy',
+				title: 'Copy',
+				arguments: [
+					c
+				]
+			};
+
+			return [
+				new vscode.CodeLens(
+					new vscode.Range(c.labelPosition, c.labelPosition),
+					runCommand
+				),
+				new vscode.CodeLens(
+					new vscode.Range(c.labelPosition, c.labelPosition),
+					copyCommand
+				),
+			]
+		}).flat(1);
+	}
 }
 
 export function initializeDocumentShellCommandsTreeView(context: vscode.ExtensionContext) {
-
 	const treeProvider = new DocumentShellCommandTreeViewProvider();
 	context.subscriptions.push(
 		vscode.workspace.onDidOpenTextDocument(treeProvider.onDidOpenTextDocument, treeProvider)
@@ -159,6 +196,10 @@ export function initializeDocumentShellCommandsTreeView(context: vscode.Extensio
 		exec(item.cmd.join("\n"), path.dirname(item.file.fsPath), { output, stopPrevious: false });
 		vscode.window.showInformationMessage(`Command ${item.label} queued`);
 	});
+	vscode.commands.registerCommand('shell.documentShellCommandView.copy', (item: DocumentShellCommandTreeItem) => {
+		vscode.env.clipboard.writeText(item.cmd.join("\n"));
+		vscode.window.showInformationMessage(`Command ${item.label} copied to clipboard`);
+	});
 	vscode.commands.registerCommand('shell.documentShellCommandView.show', (file: vscode.Uri, position: vscode.Position) => {
 		vscode.workspace.openTextDocument(file).then(editor => {
 			return vscode.window.showTextDocument(editor);
@@ -173,5 +214,13 @@ export function initializeDocumentShellCommandsTreeView(context: vscode.Extensio
 			treeDataProvider: treeProvider,
 			showCollapseAll: true,
 		})
+	);
+	context.subscriptions.push(
+		vscode.languages.registerCodeLensProvider(
+			{
+				scheme: 'file'
+			},
+			treeProvider
+		)
 	);
 }
